@@ -5,7 +5,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 public record CatalogProduct(
-        Long id,
+        String slug,
         String name,
         String description,
         String categoryName,

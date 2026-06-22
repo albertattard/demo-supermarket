@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-class CatalogService {
+public class CatalogService {
 
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
@@ -20,7 +20,7 @@ class CatalogService {
     }
 
     @Transactional(readOnly = true)
-    CatalogView findCatalog(final Long categoryId, final String search) {
+    public CatalogView findCatalog(final Long categoryId, final String search) {
         final String displaySearch = normalizeDisplaySearch(search);
         final String searchPattern = searchPattern(displaySearch);
         final List<CatalogCategory> categories = categoryRepository.findByActiveTrueOrderByNameAsc()
@@ -30,7 +30,7 @@ class CatalogService {
         final List<CatalogProduct> products = productRepository.findActiveCatalogProducts(categoryId, searchPattern)
                 .stream()
                 .map(product -> new CatalogProduct(
-                        product.getId(),
+                        product.getSlug(),
                         product.getName(),
                         product.getDescription(),
                         product.getCategory().getName(),
@@ -40,6 +40,20 @@ class CatalogService {
                 .toList();
 
         return new CatalogView(categories, products, categoryId, displaySearch == null ? "" : displaySearch);
+    }
+
+    @Transactional(readOnly = true)
+    public CatalogProduct findActiveProduct(final String productSlug) {
+        return productRepository.findBySlugAndActiveTrue(productSlug)
+                .map(product -> new CatalogProduct(
+                        product.getSlug(),
+                        product.getName(),
+                        product.getDescription(),
+                        product.getCategory().getName(),
+                        product.getUnitLabel(),
+                        product.getUnitPrice(),
+                        product.getImagePath()))
+                .orElseThrow();
     }
 
     private static String normalizeDisplaySearch(final String search) {

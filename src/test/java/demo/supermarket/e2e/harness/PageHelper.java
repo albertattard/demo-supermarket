@@ -1,5 +1,8 @@
 package demo.supermarket.e2e.harness;
 
+import java.net.URI;
+import java.util.regex.Pattern;
+
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
@@ -25,22 +28,22 @@ final class PageHelper {
 
     void shouldShowHeading(final String heading) {
         assertThat(page.getByRole(AriaRole.HEADING,
-            new Page.GetByRoleOptions().setName(heading))).isVisible();
+                new Page.GetByRoleOptions().setName(heading))).isVisible();
     }
 
     void shouldNotShowHeading(final String heading) {
         assertThat(page.getByRole(AriaRole.HEADING,
-            new Page.GetByRoleOptions().setName(heading))).not().isVisible();
+                new Page.GetByRoleOptions().setName(heading))).not().isVisible();
     }
 
     void clickLink(final String name) {
         page.getByRole(AriaRole.LINK,
-            new Page.GetByRoleOptions().setName(name)).click();
+                new Page.GetByRoleOptions().setName(name)).click();
     }
 
     void clickButton(final String name) {
         page.getByRole(AriaRole.BUTTON,
-            new Page.GetByRoleOptions().setName(name)).click();
+                new Page.GetByRoleOptions().setName(name)).click();
     }
 
     void fillInput(final String label, final String value) {
@@ -48,7 +51,7 @@ final class PageHelper {
     }
 
     void selectOptionByLabel(final String label, final String optionLabel) {
-        page.getByLabel(label).selectOption(new String[] { optionLabel });
+        page.getByLabel(label).selectOption(new String[]{optionLabel});
     }
 
     void shouldHaveInputValue(final String label, final String value) {
@@ -57,5 +60,13 @@ final class PageHelper {
 
     void shouldShowVisible(final Locator locator) {
         assertThat(locator).isVisible();
+    }
+
+    String currentPath() {
+        return URI.create(page.url()).getPath();
+    }
+
+    void shouldHavePathMatching(final Pattern pattern) {
+        org.assertj.core.api.Assertions.assertThat(currentPath()).matches(pattern);
     }
 }

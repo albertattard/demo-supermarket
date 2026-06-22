@@ -47,4 +47,46 @@ class HomePageTest {
                 .shouldShowProduct("Italian Chopped Tomatoes")
                 .shouldNotShowProduct("Cherry Tomatoes"));
     }
+
+    @Test
+    void managesPersistedGuestCartFromCatalog() {
+        harness.homePage(homePage -> {
+            homePage.openCatalog()
+                    .addProductToCart("Sourdough Country Loaf")
+                    .shouldBeOnCartScopedCatalogUrl()
+                    .shouldShowApplicationName()
+                    .shouldShowCatalogQuantity("Sourdough Country Loaf", "1")
+                    .increaseProductQuantity("Sourdough Country Loaf")
+                    .shouldShowCatalogQuantity("Sourdough Country Loaf", "2")
+                    .decreaseProductQuantity("Sourdough Country Loaf")
+                    .shouldShowCatalogQuantity("Sourdough Country Loaf", "1")
+                    .addProductToCart("Butter Croissants")
+                    .shouldBeOnCartScopedCatalogUrl()
+                    .shouldShowCatalogQuantity("Butter Croissants", "1")
+                    .openCurrentCart()
+                    .shouldBeOnOpaqueCartUrl()
+                    .shouldShowCartLine("Butter Croissants")
+                    .shouldShowQuantity("Butter Croissants", "1")
+                    .shouldShowCartLine("Sourdough Country Loaf")
+                    .shouldShowQuantity("Sourdough Country Loaf", "1")
+                    .shouldShowCartSubtotal("8,15");
+
+            final String cartPath = homePage.currentPath();
+
+            homePage.openPath(cartPath)
+                    .shouldShowCartLine("Sourdough Country Loaf")
+                    .updateQuantity("Sourdough Country Loaf", "3")
+                    .shouldShowQuantity("Sourdough Country Loaf", "3")
+                    .shouldShowQuantity("Butter Croissants", "1")
+                    .shouldShowCartSubtotal("16,05")
+                    .removeLine("Butter Croissants")
+                    .shouldShowCartLine("Sourdough Country Loaf")
+                    .shouldNotShowCartLine("Butter Croissants")
+                    .shouldShowCartSubtotal("11,85")
+                    .removeLine("Sourdough Country Loaf")
+                    .shouldShowEmptyCart()
+                    .openPath("/cart/not-a-real-token")
+                    .shouldShowCartNotFound();
+        });
+    }
 }
