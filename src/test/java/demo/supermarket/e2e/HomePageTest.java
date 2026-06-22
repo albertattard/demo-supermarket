@@ -29,6 +29,22 @@ class HomePageTest {
         harness.homePage(homePage -> homePage
                 .openCatalog()
                 .shouldShowApplicationName()
-                .shouldShowCatalogIsNotImplementedYet());
+                .shouldShowSeededCatalogProduct());
+    }
+
+    @Test
+    void filtersCatalogBySearchAndCategory() {
+        harness.homePage(homePage -> homePage
+                .openCatalog()
+                .search("tomatoes")
+                .shouldPreserveSearch("tomatoes")
+                .shouldShowProduct("Cherry Tomatoes")
+                .shouldShowProduct("Italian Chopped Tomatoes")
+                .shouldNotShowProduct("Baby Spinach")
+                .selectCategory("Pantry")
+                .search("tomatoes")
+                .shouldPreserveSearch("tomatoes")
+                .shouldShowProduct("Italian Chopped Tomatoes")
+                .shouldNotShowProduct("Cherry Tomatoes"));
     }
 }
