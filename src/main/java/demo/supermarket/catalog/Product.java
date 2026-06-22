@@ -14,7 +14,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "products")
-class Product {
+public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +23,9 @@ class Product {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
+
+    @Column(nullable = false, unique = true)
+    private String slug;
 
     @Column(nullable = false)
     private String name;
@@ -45,7 +48,7 @@ class Product {
     protected Product() {
     }
 
-    Long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -53,27 +56,31 @@ class Product {
         return category;
     }
 
-    String getName() {
+    public String getSlug() {
+        return slug;
+    }
+
+    public String getName() {
         return name;
     }
 
-    String getDescription() {
+    public String getDescription() {
         return description;
     }
 
-    String getUnitLabel() {
+    public String getUnitLabel() {
         return unitLabel;
     }
 
-    BigDecimal getUnitPrice() {
+    public BigDecimal getUnitPrice() {
         return unitPrice;
     }
 
-    boolean isActive() {
+    public boolean isActive() {
         return active;
     }
 
-    String getImagePath() {
+    public String getImagePath() {
         return imagePath;
     }
 }

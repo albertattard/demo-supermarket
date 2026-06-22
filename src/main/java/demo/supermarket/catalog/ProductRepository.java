@@ -1,12 +1,15 @@
 package demo.supermarket.catalog;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-interface ProductRepository extends JpaRepository<Product, Long> {
+public interface ProductRepository extends JpaRepository<Product, Long> {
+
+    Optional<Product> findBySlugAndActiveTrue(String slug);
 
     @Query("""
             select product
